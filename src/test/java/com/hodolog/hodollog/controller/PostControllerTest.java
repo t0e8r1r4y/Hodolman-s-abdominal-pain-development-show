@@ -250,4 +250,33 @@ class PostControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @DisplayName("존재하지 않는 게시글 조회")
+    void requestFailTest() throws Exception {
+
+        // when
+        mockMvc.perform( get("/posts/{postId}",1L )
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("글 쓰기 요청시 잘못된 값 반환")
+    void InvalidTest() throws Exception {
+        // Given
+        PostCreate request = PostCreate.builder()
+                .title("바보새퀴.").content("내용입니다.").build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String given = objectMapper.writeValueAsString(request);
+
+        // when
+        mockMvc.perform(post("/v1/posts7")
+                        .contentType(APPLICATION_JSON)
+                        .content(given))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+    }
+
 }
